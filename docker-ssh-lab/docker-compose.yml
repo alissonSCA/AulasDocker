@@ -1,0 +1,155 @@
+version: '3.8'
+
+services:
+  # Serviço base para todas as VMs
+  team-base:
+    build: .
+    image: docker-ssh-lab:latest
+    restart: unless-stopped
+    networks:
+      - lab-network
+
+  # 10 VMs para as equipes
+  team01:
+    extends:
+      service: team-base
+    container_name: team01-vm
+    hostname: team01-vm
+    ports:
+      - "2201:22"
+    environment:
+      - TEAM_NUMBER=01
+      - TEAM_PASSWORD=team01pass
+    volumes:
+      - ./data/team01:/home/team01/workspace
+      - ./logs/team01:/var/log/team01
+
+  team02:
+    extends:
+      service: team-base
+    container_name: team02-vm
+    hostname: team02-vm
+    ports:
+      - "2202:22"
+    environment:
+      - TEAM_NUMBER=02
+      - TEAM_PASSWORD=team02pass
+    volumes:
+      - ./data/team02:/home/team02/workspace
+      - ./logs/team02:/var/log/team02
+
+  team03:
+    extends:
+      service: team-base
+    container_name: team03-vm
+    hostname: team03-vm
+    ports:
+      - "2203:22"
+    environment:
+      - TEAM_NUMBER=03
+      - TEAM_PASSWORD=team03pass
+    volumes:
+      - ./data/team03:/home/team03/workspace
+      - ./logs/team03:/var/log/team03
+
+  team04:
+    extends:
+      service: team-base
+    container_name: team04-vm
+    hostname: team04-vm
+    ports:
+      - "2204:22"
+    environment:
+      - TEAM_NUMBER=04
+      - TEAM_PASSWORD=team04pass
+    volumes:
+      - ./data/team04:/home/team04/workspace
+      - ./logs/team04:/var/log/team04
+
+  team05:
+    extends:
+      service: team-base
+    container_name: team05-vm
+    hostname: team05-vm
+    ports:
+      - "2205:22"
+    environment:
+      - TEAM_NUMBER=05
+      - TEAM_PASSWORD=team05pass
+    volumes:
+      - ./data/team05:/home/team05/workspace
+      - ./logs/team05:/var/log/team05
+
+  team06:
+    extends:
+      service: team-base
+    container_name: team06-vm
+    hostname: team06-vm
+    ports:
+      - "2206:22"
+    environment:
+      - TEAM_NUMBER=06
+      - TEAM_PASSWORD=team06pass
+    volumes:
+      - ./data/team06:/home/team06/workspace
+      - ./logs/team06:/var/log/team06
+
+  team07:
+    extends:
+      service: team-base
+    container_name: team07-vm
+    hostname: team07-vm
+    ports:
+      - "2207:22"
+    environment:
+      - TEAM_NUMBER=07
+      - TEAM_PASSWORD=team07pass
+    volumes:
+      - ./data/team07:/home/team07/workspace
+      - ./logs/team07:/var/log/team07
+
+  team08:
+    extends:
+      service: team-base
+    container_name: team08-vm
+    hostname: team08-vm
+    ports:
+      - "2208:22"
+    environment:
+      - TEAM_NUMBER=08
+      - TEAM_PASSWORD=team08pass
+    volumes:
+      - ./data/team08:/home/team08/workspace
+      - ./logs/team08:/var/log/team08
+
+  team09:
+    extends:
+      service: team-base
+    container_name: team09-vm
+    hostname: team09-vm
+    ports:
+      - "2209:22"
+    environment:
+      - TEAM_NUMBER=09
+      - TEAM_PASSWORD=team09pass
+    volumes:
+      - ./data/team09:/home/team09/workspace
+      - ./logs/team09:/var/log/team09
+
+  team10:
+    extends:
+      service: team-base
+    container_name: team10-vm
+    hostname: team10-vm
+    ports:
+      - "2210:22"
+    environment:
+      - TEAM_NUMBER=10
+      - TEAM_PASSWORD=team10pass
+    volumes:
+      - ./data/team10:/home/team10/workspace
+      - ./logs/team10:/var/log/team10
+
+networks:
+  lab-network:
+    driver: bridge
