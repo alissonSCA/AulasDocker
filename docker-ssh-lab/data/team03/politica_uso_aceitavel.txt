@@ -1,0 +1,10 @@
+POLITICA DE USO ACEITAVEL - TI CORPORATIVO
+Documento interno - revisao anual
+
+1. O uso dos sistemas corporativos e destinado exclusivamente a
+   atividades profissionais autorizadas.
+2. E proibido compartilhar credenciais de acesso com terceiros.
+3. Todo acesso remoto e registrado para fins de auditoria de seguranca.
+4. Duvidas devem ser encaminhadas ao Service Desk de TI (ramal 4040).
+
+Ultima atualizacao: revisao automatica do sistema de compliance.

@@ -1,0 +1,8 @@
+<!-- Waypoint marcado pela equipe de reconhecimento de campo -->
+<!-- Ponto de interesse: prioridade ALTA -->
+<!-- Confirmar coordenadas antes de prosseguir com a operacao -->
+<Placemark>
+  <name>Ponto de execucao</name>
+  <status>alvo confirmado</status>
+  <coordinates>-43.2302,-22.9121,0</coordinates>
+</Placemark>
