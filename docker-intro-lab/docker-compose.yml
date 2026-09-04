@@ -1,0 +1,187 @@
+version: '3.8'
+
+services:
+  # Serviço base para todas as VMs
+  team-base:
+    build: .
+    image: docker-intro-lab:latest
+    restart: unless-stopped
+    # privileged é o que permite rodar Docker DENTRO deste container
+    # (Docker-in-Docker) — sem isso "sudo apt install docker.io" até
+    # funciona, mas o daemon nunca sobe.
+    privileged: true
+    # cgroup: host ajuda o Docker aninhado a enxergar os cgroups do host
+    # em máquinas com cgroup v2 (padrão em distros recentes, incluindo
+    # Pop!_OS). Se o seu "docker compose" reclamar dessa chave (versão
+    # antiga do Compose), pode apagar esta linha em cada serviço — ver
+    # README.md, seção Troubleshooting.
+    cgroup: host
+    networks:
+      - lab-network
+
+  # 10 VMs para as equipes
+  team01:
+    extends:
+      service: team-base
+    container_name: team01-intro-vm
+    hostname: team01-vm
+    ports:
+      - "2301:22"
+      - "8301:8080"
+    environment:
+      - TEAM_NUMBER=01
+      - TEAM_PASSWORD=team01pass
+    volumes:
+      - ./sites/team01:/home/team01/site
+      - team01_docker_data:/var/lib/docker
+
+  team02:
+    extends:
+      service: team-base
+    container_name: team02-intro-vm
+    hostname: team02-vm
+    ports:
+      - "2302:22"
+      - "8302:8080"
+    environment:
+      - TEAM_NUMBER=02
+      - TEAM_PASSWORD=team02pass
+    volumes:
+      - ./sites/team02:/home/team02/site
+      - team02_docker_data:/var/lib/docker
+
+  team03:
+    extends:
+      service: team-base
+    container_name: team03-intro-vm
+    hostname: team03-vm
+    ports:
+      - "2303:22"
+      - "8303:8080"
+    environment:
+      - TEAM_NUMBER=03
+      - TEAM_PASSWORD=team03pass
+    volumes:
+      - ./sites/team03:/home/team03/site
+      - team03_docker_data:/var/lib/docker
+
+  team04:
+    extends:
+      service: team-base
+    container_name: team04-intro-vm
+    hostname: team04-vm
+    ports:
+      - "2304:22"
+      - "8304:8080"
+    environment:
+      - TEAM_NUMBER=04
+      - TEAM_PASSWORD=team04pass
+    volumes:
+      - ./sites/team04:/home/team04/site
+      - team04_docker_data:/var/lib/docker
+
+  team05:
+    extends:
+      service: team-base
+    container_name: team05-intro-vm
+    hostname: team05-vm
+    ports:
+      - "2305:22"
+      - "8305:8080"
+    environment:
+      - TEAM_NUMBER=05
+      - TEAM_PASSWORD=team05pass
+    volumes:
+      - ./sites/team05:/home/team05/site
+      - team05_docker_data:/var/lib/docker
+
+  team06:
+    extends:
+      service: team-base
+    container_name: team06-intro-vm
+    hostname: team06-vm
+    ports:
+      - "2306:22"
+      - "8306:8080"
+    environment:
+      - TEAM_NUMBER=06
+      - TEAM_PASSWORD=team06pass
+    volumes:
+      - ./sites/team06:/home/team06/site
+      - team06_docker_data:/var/lib/docker
+
+  team07:
+    extends:
+      service: team-base
+    container_name: team07-intro-vm
+    hostname: team07-vm
+    ports:
+      - "2307:22"
+      - "8307:8080"
+    environment:
+      - TEAM_NUMBER=07
+      - TEAM_PASSWORD=team07pass
+    volumes:
+      - ./sites/team07:/home/team07/site
+      - team07_docker_data:/var/lib/docker
+
+  team08:
+    extends:
+      service: team-base
+    container_name: team08-intro-vm
+    hostname: team08-vm
+    ports:
+      - "2308:22"
+      - "8308:8080"
+    environment:
+      - TEAM_NUMBER=08
+      - TEAM_PASSWORD=team08pass
+    volumes:
+      - ./sites/team08:/home/team08/site
+      - team08_docker_data:/var/lib/docker
+
+  team09:
+    extends:
+      service: team-base
+    container_name: team09-intro-vm
+    hostname: team09-vm
+    ports:
+      - "2309:22"
+      - "8309:8080"
+    environment:
+      - TEAM_NUMBER=09
+      - TEAM_PASSWORD=team09pass
+    volumes:
+      - ./sites/team09:/home/team09/site
+      - team09_docker_data:/var/lib/docker
+
+  team10:
+    extends:
+      service: team-base
+    container_name: team10-intro-vm
+    hostname: team10-vm
+    ports:
+      - "2310:22"
+      - "8310:8080"
+    environment:
+      - TEAM_NUMBER=10
+      - TEAM_PASSWORD=team10pass
+    volumes:
+      - ./sites/team10:/home/team10/site
+      - team10_docker_data:/var/lib/docker
+
+networks:
+  lab-network:
+    driver: bridge
+
+volumes:
+  team01_docker_data:
+  team02_docker_data:
+  team03_docker_data:
+  team04_docker_data:
+  team05_docker_data:
+  team06_docker_data:
+  team07_docker_data:
+  team08_docker_data:
+  team09_docker_data:
+  team10_docker_data:
