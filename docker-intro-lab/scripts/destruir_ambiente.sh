@@ -8,7 +8,7 @@
 # indefinidamente na máquina.
 #
 # O que este script remove:
-#   - os containers das 10 equipes (e o serviço-base "team-base");
+#   - os containers das 10 equipes;
 #   - a rede "lab-network";
 #   - os volumes nomeados teamNN_docker_data (o "disco" do Docker
 #     aninhado de cada equipe — pode ser grande, já que cada equipe
@@ -50,7 +50,7 @@ echo "============================================================"
 echo " Destruir ambiente: docker-intro-lab"
 echo "============================================================"
 echo "Isto vai parar e remover:"
-echo "  - todos os containers das 10 equipes (+ team-base)"
+echo "  - todos os containers das 10 equipes"
 echo "  - a rede lab-network"
 echo "  - os 10 volumes teamNN_docker_data"
 echo "  - a imagem docker-intro-lab:latest"
@@ -70,8 +70,8 @@ if [ "$SKIP_CONFIRM" -ne 1 ]; then
 fi
 
 echo
-echo ">> Derrubando containers, rede e volumes (todos os profiles)..."
-docker compose --profile nao-iniciar-diretamente down -v --remove-orphans
+echo ">> Derrubando containers, rede e volumes..."
+docker compose down -v --remove-orphans
 
 echo ">> Removendo a imagem docker-intro-lab:latest..."
 docker rmi docker-intro-lab:latest 2>/dev/null || echo "   (imagem já não existia)"

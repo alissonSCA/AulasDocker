@@ -1,26 +1,28 @@
-version: '3.8'
+# "x-team-base" é um "extension field" (prefixo x-): o Docker Compose
+# ignora completamente qualquer chave de topo que comece com "x-" como
+# definição de serviço — ele nunca tenta subir isso sozinho. Serve só
+# como modelo, reaproveitado pelos serviços teamNN abaixo via YAML
+# merge key ("<<: *team-base").
+#
+# Isso substitui a abordagem anterior (um serviço "team-base" real +
+# "extends"), que tinha um problema sério: "extends" copia TODA a
+# configuração do serviço base para quem usa, inclusive coisas como
+# "profiles" — então qualquer tentativa de esconder "team-base" do
+# "docker compose up" padrão com profiles acabava escondendo também
+# as 10 equipes (sintoma: "no service selected", nada sobe). Com
+# "x-team-base" isso não existe: não é um serviço, não tem profile
+# nenhum para herdar, e nunca aparece em "docker compose ps".
+x-team-base: &team-base
+  build: .
+  image: docker-ssh-lab:latest
+  restart: unless-stopped
+  networks:
+    - lab-network
 
 services:
-  # Serviço base para todas as VMs
-  team-base:
-    build: .
-    image: docker-ssh-lab:latest
-    restart: unless-stopped
-    # profiles com um nome que nunca é ativado: isso impede que o
-    # "docker compose up" (sem argumentos) suba este serviço como um
-    # 11º container por conta própria. Ele existe só para ser herdado
-    # via "extends" pelos serviços teamNN abaixo — sem esta linha, o
-    # Compose sobe "team-base" também (sem portas nem volumes,
-    # inutilizável), o que não bate com os "10 VMs" do README e
-    # desperdiça recursos.
-    profiles: ["nao-iniciar-diretamente"]
-    networks:
-      - lab-network
-
   # 10 VMs para as equipes
   team01:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team01-vm
     hostname: team01-vm
     ports:
@@ -33,8 +35,7 @@ services:
       - ./logs/team01:/var/log/team01
 
   team02:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team02-vm
     hostname: team02-vm
     ports:
@@ -47,8 +48,7 @@ services:
       - ./logs/team02:/var/log/team02
 
   team03:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team03-vm
     hostname: team03-vm
     ports:
@@ -61,8 +61,7 @@ services:
       - ./logs/team03:/var/log/team03
 
   team04:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team04-vm
     hostname: team04-vm
     ports:
@@ -75,8 +74,7 @@ services:
       - ./logs/team04:/var/log/team04
 
   team05:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team05-vm
     hostname: team05-vm
     ports:
@@ -89,8 +87,7 @@ services:
       - ./logs/team05:/var/log/team05
 
   team06:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team06-vm
     hostname: team06-vm
     ports:
@@ -103,8 +100,7 @@ services:
       - ./logs/team06:/var/log/team06
 
   team07:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team07-vm
     hostname: team07-vm
     ports:
@@ -117,8 +113,7 @@ services:
       - ./logs/team07:/var/log/team07
 
   team08:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team08-vm
     hostname: team08-vm
     ports:
@@ -131,8 +126,7 @@ services:
       - ./logs/team08:/var/log/team08
 
   team09:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team09-vm
     hostname: team09-vm
     ports:
@@ -145,8 +139,7 @@ services:
       - ./logs/team09:/var/log/team09
 
   team10:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team10-vm
     hostname: team10-vm
     ports:

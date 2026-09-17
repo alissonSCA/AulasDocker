@@ -7,7 +7,7 @@
 # 10 servidores SSH rodando indefinidamente na máquina.
 #
 # O que este script remove:
-#   - os containers das 10 equipes (e o serviço-base "team-base");
+#   - os containers das 10 equipes;
 #   - a rede "lab-network";
 #   - a imagem docker-ssh-lab:latest construída localmente.
 #
@@ -48,7 +48,7 @@ echo "============================================================"
 echo " Destruir ambiente: docker-ssh-lab (Operação Nexus)"
 echo "============================================================"
 echo "Isto vai parar e remover:"
-echo "  - todos os containers das 10 equipes (+ team-base)"
+echo "  - todos os containers das 10 equipes"
 echo "  - a rede lab-network"
 echo "  - a imagem docker-ssh-lab:latest"
 if [ "$PURGE_DATA" -eq 1 ]; then
@@ -69,8 +69,8 @@ if [ "$SKIP_CONFIRM" -ne 1 ]; then
 fi
 
 echo
-echo ">> Derrubando containers e rede (todos os profiles)..."
-docker compose --profile nao-iniciar-diretamente down -v --remove-orphans
+echo ">> Derrubando containers e rede..."
+docker compose down -v --remove-orphans
 
 echo ">> Removendo a imagem docker-ssh-lab:latest..."
 docker rmi docker-ssh-lab:latest 2>/dev/null || echo "   (imagem já não existia)"

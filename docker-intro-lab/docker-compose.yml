@@ -1,36 +1,38 @@
-version: '3.8'
+# "x-team-base" é um "extension field" (prefixo x-): o Docker Compose
+# ignora completamente qualquer chave de topo que comece com "x-" como
+# definição de serviço — ele nunca tenta subir isso sozinho. Serve só
+# como modelo, reaproveitado pelos serviços teamNN abaixo via YAML
+# merge key ("<<: *team-base").
+#
+# Isso substitui a abordagem anterior (um serviço "team-base" real +
+# "extends"), que tinha um problema sério: "extends" copia TODA a
+# configuração do serviço base para quem usa, inclusive coisas como
+# "profiles" — então qualquer tentativa de esconder "team-base" do
+# "docker compose up" padrão com profiles acabava escondendo também
+# as 10 equipes (sintoma: "no service selected", nada sobe). Com
+# "x-team-base" isso não existe: não é um serviço, não tem profile
+# nenhum para herdar, e nunca aparece em "docker compose ps".
+x-team-base: &team-base
+  build: .
+  image: docker-intro-lab:latest
+  restart: unless-stopped
+  # privileged é o que permite rodar Docker DENTRO deste container
+  # (Docker-in-Docker) — sem isso "sudo apt install docker.io" até
+  # funciona, mas o daemon nunca sobe.
+  privileged: true
+  # cgroup: host ajuda o Docker aninhado a enxergar os cgroups do host
+  # em máquinas com cgroup v2 (padrão em distros recentes, incluindo
+  # Pop!_OS). Se o seu "docker compose" reclamar dessa chave (versão
+  # antiga do Compose), pode apagar esta linha em cada serviço — ver
+  # README.md, seção Troubleshooting.
+  cgroup: host
+  networks:
+    - lab-network
 
 services:
-  # Serviço base para todas as VMs
-  team-base:
-    build: .
-    image: docker-intro-lab:latest
-    restart: unless-stopped
-    # profiles com um nome que nunca é ativado: isso impede que o
-    # "docker compose up" (sem argumentos) suba este serviço como um
-    # 11º container por conta própria. Ele existe só para ser herdado
-    # via "extends" pelos serviços teamNN abaixo — sem esta linha, o
-    # Compose sobe "team-base" também (sem portas nem volumes,
-    # inutilizável), o que não bate com os "10 VMs" do README e
-    # desperdiça recursos.
-    profiles: ["nao-iniciar-diretamente"]
-    # privileged é o que permite rodar Docker DENTRO deste container
-    # (Docker-in-Docker) — sem isso "sudo apt install docker.io" até
-    # funciona, mas o daemon nunca sobe.
-    privileged: true
-    # cgroup: host ajuda o Docker aninhado a enxergar os cgroups do host
-    # em máquinas com cgroup v2 (padrão em distros recentes, incluindo
-    # Pop!_OS). Se o seu "docker compose" reclamar dessa chave (versão
-    # antiga do Compose), pode apagar esta linha em cada serviço — ver
-    # README.md, seção Troubleshooting.
-    cgroup: host
-    networks:
-      - lab-network
-
   # 10 VMs para as equipes
   team01:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team01-intro-vm
     hostname: team01-vm
     ports:
@@ -44,8 +46,7 @@ services:
       - team01_docker_data:/var/lib/docker
 
   team02:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team02-intro-vm
     hostname: team02-vm
     ports:
@@ -59,8 +60,7 @@ services:
       - team02_docker_data:/var/lib/docker
 
   team03:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team03-intro-vm
     hostname: team03-vm
     ports:
@@ -74,8 +74,7 @@ services:
       - team03_docker_data:/var/lib/docker
 
   team04:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team04-intro-vm
     hostname: team04-vm
     ports:
@@ -89,8 +88,7 @@ services:
       - team04_docker_data:/var/lib/docker
 
   team05:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team05-intro-vm
     hostname: team05-vm
     ports:
@@ -104,8 +102,7 @@ services:
       - team05_docker_data:/var/lib/docker
 
   team06:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team06-intro-vm
     hostname: team06-vm
     ports:
@@ -119,8 +116,7 @@ services:
       - team06_docker_data:/var/lib/docker
 
   team07:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team07-intro-vm
     hostname: team07-vm
     ports:
@@ -134,8 +130,7 @@ services:
       - team07_docker_data:/var/lib/docker
 
   team08:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team08-intro-vm
     hostname: team08-vm
     ports:
@@ -149,8 +144,7 @@ services:
       - team08_docker_data:/var/lib/docker
 
   team09:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team09-intro-vm
     hostname: team09-vm
     ports:
@@ -164,8 +158,7 @@ services:
       - team09_docker_data:/var/lib/docker
 
   team10:
-    extends:
-      service: team-base
+    <<: *team-base
     container_name: team10-intro-vm
     hostname: team10-vm
     ports:
