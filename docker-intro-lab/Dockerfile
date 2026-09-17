@@ -42,6 +42,13 @@ RUN chmod +x /usr/local/bin/setup-users.sh
 COPY scripts/healthcheck.sh /usr/local/bin/healthcheck.sh
 RUN chmod +x /usr/local/bin/healthcheck.sh
 
+# Helper que os alunos rodam depois de instalar o Docker
+# ("iniciar-docker"): garante que o daemon suba e fique pronto de
+# forma determinística para todo mundo, em vez de depender do timing
+# de "sudo service docker start" (ver comentários no próprio script).
+COPY scripts/iniciar-docker.sh /usr/local/bin/iniciar-docker
+RUN chmod +x /usr/local/bin/iniciar-docker
+
 # 22 = SSH da equipe. 8080 = porta onde a equipe vai publicar o próprio
 # container Nginx lá dentro (mapeada por fora em docker-compose.yml).
 EXPOSE 22 8080

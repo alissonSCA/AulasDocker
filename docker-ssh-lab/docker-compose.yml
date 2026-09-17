@@ -6,6 +6,14 @@ services:
     build: .
     image: docker-ssh-lab:latest
     restart: unless-stopped
+    # profiles com um nome que nunca é ativado: isso impede que o
+    # "docker compose up" (sem argumentos) suba este serviço como um
+    # 11º container por conta própria. Ele existe só para ser herdado
+    # via "extends" pelos serviços teamNN abaixo — sem esta linha, o
+    # Compose sobe "team-base" também (sem portas nem volumes,
+    # inutilizável), o que não bate com os "10 VMs" do README e
+    # desperdiça recursos.
+    profiles: ["nao-iniciar-diretamente"]
     networks:
       - lab-network
 

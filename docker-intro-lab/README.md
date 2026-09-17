@@ -5,7 +5,8 @@ informática. A turma é dividida em 10 equipes; cada equipe conecta via
 SSH numa VM própria (um container isolado), onde ela mesma:
 
 1. instala o Docker (`sudo apt install docker.io`);
-2. inicia o serviço e testa a instalação (`docker run hello-world`);
+2. inicia o serviço com `iniciar-docker` e testa a instalação
+   (`sudo docker run hello-world`);
 3. escreve um `index.html` próprio com `nano`;
 4. sobe um servidor Nginx publicando essa página;
 5. edita a página e "sobe de novo" para confirmar que o conteúdo
@@ -13,10 +14,11 @@ SSH numa VM própria (um container isolado), onde ela mesma:
 
 Este laboratório é **independente** do laboratório `docker-ssh-lab`
 (Operação Nexus) — pode rodar antes dele, em outra aula, como
-preparação. As portas usadas aqui (2301–2310 para SSH, 8301–8310 para
-HTTP) foram escolhidas de propósito para não colidir com as portas
-2201–2210 da Operação Nexus, caso um dia você precise subir os dois ao
-mesmo tempo na mesma máquina.
+preparação. Todos os laboratórios deste repositório usam a mesma
+convenção de porta SSH (**22NN**, uma por equipe), já que nunca são
+usados dois laboratórios ao mesmo tempo na mesma máquina — assim fica
+mais simples de decorar. A porta HTTP (8301–8310) tem faixa própria,
+exclusiva deste laboratório.
 
 ---
 
@@ -48,7 +50,7 @@ imperceptível.
 ## Como subir o laboratório
 
 Requisitos: Docker e Docker Compose na máquina que vai rodar os
-containers, portas 2301–2310 e 8301–8310 livres nela, e os
+containers, portas 2201–2210 e 8301–8310 livres nela, e os
 computadores/celulares das equipes na mesma rede local dessa máquina.
 
 ```bash
@@ -64,28 +66,28 @@ escreva no quadro (os slides têm um espaço reservado para isso).
 Cada equipe conecta com:
 
 ```bash
-ssh teamNN@IP_DA_MAQUINA -p 23NN
+ssh teamNN@IP_DA_MAQUINA -p 22NN
 ```
 
 | Equipe | Usuário | Porta SSH | Senha padrão | Porta HTTP (pra ver o site no navegador) |
 |---|---|---|---|---|
-| 01 | team01 | 2301 | team01pass | 8301 |
-| 02 | team02 | 2302 | team02pass | 8302 |
-| 03 | team03 | 2303 | team03pass | 8303 |
-| 04 | team04 | 2304 | team04pass | 8304 |
-| 05 | team05 | 2305 | team05pass | 8305 |
-| 06 | team06 | 2306 | team06pass | 8306 |
-| 07 | team07 | 2307 | team07pass | 8307 |
-| 08 | team08 | 2308 | team08pass | 8308 |
-| 09 | team09 | 2309 | team09pass | 8309 |
-| 10 | team10 | 2310 | team10pass | 8310 |
+| 01 | team01 | 2201 | team01pass | 8301 |
+| 02 | team02 | 2202 | team02pass | 8302 |
+| 03 | team03 | 2203 | team03pass | 8303 |
+| 04 | team04 | 2204 | team04pass | 8304 |
+| 05 | team05 | 2205 | team05pass | 8305 |
+| 06 | team06 | 2206 | team06pass | 8306 |
+| 07 | team07 | 2207 | team07pass | 8307 |
+| 08 | team08 | 2208 | team08pass | 8308 |
+| 09 | team09 | 2209 | team09pass | 8309 |
+| 10 | team10 | 2210 | team10pass | 8310 |
 
 As senhas padrão vêm de `docker-compose.yml` (variável `TEAM_PASSWORD`
 de cada serviço) — troque lá se quiser senhas diferentes, antes de
 subir os containers.
 
 Dentro da VM, cada equipe deve publicar o próprio container Nginx na
-porta **8080** (`docker run -d -p 8080:80 ...`) — é essa porta 8080
+porta **8080** (`sudo docker run -d -p 8080:80 ...`) — é essa porta 8080
 *interna* que o `docker-compose.yml` já mapeia para a porta pública
 83NN de cada equipe. Isso está nos slides, mas vale reforçar
 verbalmente durante a aula.
@@ -104,13 +106,13 @@ cd docker-intro-lab
 docker compose up -d --build team01
 docker compose logs -f team01        # espera "Usuário team01 configurado com sucesso!"
 
-ssh team01@localhost -p 2301         # senha: team01pass
+ssh team01@localhost -p 2201         # senha: team01pass
 # dentro da VM da equipe 01:
 sudo apt update && sudo apt install -y docker.io
-sudo service docker start            # se der erro, ver "Troubleshooting" abaixo
-docker run hello-world               # tem que rodar sem erro
+iniciar-docker                       # espera o daemon ficar pronto de verdade (ver Troubleshooting)
+sudo docker run hello-world          # tem que rodar sem erro
 nano ~/site/index.html               # edite qualquer coisa e salve
-docker run -d --name meusite -p 8080:80 -v ~/site:/usr/share/nginx/html nginx
+sudo docker run -d --name meusite -p 8080:80 -v ~/site:/usr/share/nginx/html nginx
 curl localhost:8080                  # tem que devolver o HTML editado
 exit
 ```
@@ -145,6 +147,8 @@ docker-intro-lab/
 ├── scripts/
 │   ├── setup-users.sh            # entrypoint: cria o usuário e o index.html inicial
 │   ├── healthcheck.sh
+│   ├── iniciar-docker.sh          # copiado p/ dentro da VM como "iniciar-docker" (ver Troubleshooting)
+│   ├── destruir_ambiente.sh       # roda no host: derruba containers/volumes/imagem depois da aula
 │   └── revisar_sites.sh          # mostra o index.html de todas as equipes (roda no host)
 └── README.md
 ```
@@ -165,21 +169,32 @@ volume montado.
 
 ## Troubleshooting
 
-**`sudo service docker start` não funciona / "Unit docker.service not
-found" ou parecido.** O container não tem systemd, então use o
-comando alternativo ensinado nos slides:
+**Por que ensinar `iniciar-docker` em vez de `sudo service docker
+start`?** O container não tem systemd, então `service docker start`
+usa o init.d clássico: ele dispara o daemon em segundo plano e
+retorna na hora, sem esperar o daemon terminar de subir de verdade.
+Isso é a causa clássica do sintoma "`docker --version` funciona, mas
+`docker ps` ainda dá erro de conexão" — o `--version` nunca fala com o
+daemon, o `ps` sim, e dependendo da velocidade da máquina de cada
+equipe o daemon podia ainda não estar pronto. Como o objetivo é que
+a aula funcione igual para todas as equipes, o `iniciar-docker`
+(pré-instalado na imagem, ver `scripts/iniciar-docker.sh`) inicia o
+daemon e só devolve o terminal depois de confirmar com `docker info`
+que ele está mesmo pronto — elimina essa corrida de vez.
 
-```bash
-sudo dockerd > /tmp/dockerd.log 2>&1 &
-sleep 3
-docker version
-```
+**`iniciar-docker` termina com "não respondeu em 30s".** Confira o log
+com `cat /var/log/dockerd.log` dentro da VM. Se aparecer erro de
+cgroup ("cgroups: cgroup mountpoint does not exist" ou similar), o
+host provavelmente está em cgroup v1 e a chave `cgroup: host` do
+`docker-compose.yml` não resolveu. Tente remover a linha `cgroup:
+host` de cada serviço no `docker-compose.yml` e suba de novo (`docker
+compose up -d --build`).
 
-Se aparecer erro de cgroup ("cgroups: cgroup mountpoint does not
-exist" ou similar), o host provavelmente está em cgroup v1 e a chave
-`cgroup: host` do `docker-compose.yml` não resolveu. Tente remover a
-linha `cgroup: host` de cada serviço no `docker-compose.yml` e suba de
-novo (`docker compose up -d --build`).
+**`docker ps` ou `docker run` dizem "permission denied" mexendo no
+socket.** Use sempre `sudo docker ...` — o usuário da equipe não faz
+parte do grupo `docker`, de propósito, para não depender de logout/
+login para a mudança de grupo fazer efeito (mais uma fonte de
+comportamento inconsistente entre equipes).
 
 **`docker compose` reclama da chave `cgroup: host` ao subir.** Sua
 versão do Docker Compose é mais antiga. Apague a linha `cgroup: host`
@@ -189,14 +204,14 @@ v2.
 
 **Uma equipe não consegue conectar via SSH.** Confira se a porta certa
 está livre no host (`docker compose ps`) e se o firewall da máquina
-libera as faixas 2301–2310 e 8301–8310 na rede local.
+libera as faixas 2201–2210 e 8301–8310 na rede local.
 
 **O site não abre no navegador (porta 83NN), mas `curl localhost:8080`
 funciona dentro da VM.** A equipe provavelmente publicou o Nginx numa
 porta diferente de 8080 (por exemplo, `-p 80:80`). Peça pra conferir
-com `docker ps` e refazer o `docker run` com `-p 8080:80`.
+com `sudo docker ps` e refazer o `sudo docker run` com `-p 8080:80`.
 
-**`docker run hello-world` trava ou dá timeout tentando baixar a
+**`sudo docker run hello-world` trava ou dá timeout tentando baixar a
 imagem.** A VM da equipe não tem internet — confira a rede da máquina
 host e se o firewall não está bloqueando a saída dos containers.
 

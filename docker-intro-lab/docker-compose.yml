@@ -6,6 +6,14 @@ services:
     build: .
     image: docker-intro-lab:latest
     restart: unless-stopped
+    # profiles com um nome que nunca é ativado: isso impede que o
+    # "docker compose up" (sem argumentos) suba este serviço como um
+    # 11º container por conta própria. Ele existe só para ser herdado
+    # via "extends" pelos serviços teamNN abaixo — sem esta linha, o
+    # Compose sobe "team-base" também (sem portas nem volumes,
+    # inutilizável), o que não bate com os "10 VMs" do README e
+    # desperdiça recursos.
+    profiles: ["nao-iniciar-diretamente"]
     # privileged é o que permite rodar Docker DENTRO deste container
     # (Docker-in-Docker) — sem isso "sudo apt install docker.io" até
     # funciona, mas o daemon nunca sobe.
@@ -26,7 +34,7 @@ services:
     container_name: team01-intro-vm
     hostname: team01-vm
     ports:
-      - "2301:22"
+      - "2201:22"
       - "8301:8080"
     environment:
       - TEAM_NUMBER=01
@@ -41,7 +49,7 @@ services:
     container_name: team02-intro-vm
     hostname: team02-vm
     ports:
-      - "2302:22"
+      - "2202:22"
       - "8302:8080"
     environment:
       - TEAM_NUMBER=02
@@ -56,7 +64,7 @@ services:
     container_name: team03-intro-vm
     hostname: team03-vm
     ports:
-      - "2303:22"
+      - "2203:22"
       - "8303:8080"
     environment:
       - TEAM_NUMBER=03
@@ -71,7 +79,7 @@ services:
     container_name: team04-intro-vm
     hostname: team04-vm
     ports:
-      - "2304:22"
+      - "2204:22"
       - "8304:8080"
     environment:
       - TEAM_NUMBER=04
@@ -86,7 +94,7 @@ services:
     container_name: team05-intro-vm
     hostname: team05-vm
     ports:
-      - "2305:22"
+      - "2205:22"
       - "8305:8080"
     environment:
       - TEAM_NUMBER=05
@@ -101,7 +109,7 @@ services:
     container_name: team06-intro-vm
     hostname: team06-vm
     ports:
-      - "2306:22"
+      - "2206:22"
       - "8306:8080"
     environment:
       - TEAM_NUMBER=06
@@ -116,7 +124,7 @@ services:
     container_name: team07-intro-vm
     hostname: team07-vm
     ports:
-      - "2307:22"
+      - "2207:22"
       - "8307:8080"
     environment:
       - TEAM_NUMBER=07
@@ -131,7 +139,7 @@ services:
     container_name: team08-intro-vm
     hostname: team08-vm
     ports:
-      - "2308:22"
+      - "2208:22"
       - "8308:8080"
     environment:
       - TEAM_NUMBER=08
@@ -146,7 +154,7 @@ services:
     container_name: team09-intro-vm
     hostname: team09-vm
     ports:
-      - "2309:22"
+      - "2209:22"
       - "8309:8080"
     environment:
       - TEAM_NUMBER=09
@@ -161,7 +169,7 @@ services:
     container_name: team10-intro-vm
     hostname: team10-vm
     ports:
-      - "2310:22"
+      - "2210:22"
       - "8310:8080"
     environment:
       - TEAM_NUMBER=10
